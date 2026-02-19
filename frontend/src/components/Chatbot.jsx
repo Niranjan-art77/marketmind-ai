@@ -40,51 +40,51 @@ const Chatbot = () => {
     };
 
     return (
-        <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end pointer-events-none">
+        <div className="fixed bottom-8 right-8 z-50 flex flex-col items-end pointer-events-none">
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                        initial={{ opacity: 0, y: 20, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 20, scale: 0.9 }}
-                        className="glass border border-white/10 rounded-2xl w-[350px] h-[500px] mb-4 shadow-2xl overflow-hidden pointer-events-auto flex flex-col"
+                        exit={{ opacity: 0, y: 20, scale: 0.95 }}
+                        className="bg-white border border-gray-100 rounded-3xl w-[360px] h-[550px] mb-6 shadow-2xl overflow-hidden pointer-events-auto flex flex-col font-sans"
                     >
                         {/* Header */}
-                        <div className="p-4 border-b border-white/10 flex justify-between items-center bg-accent/5 backdrop-blur-md">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 bg-accent/20 rounded-lg">
-                                    <Bot size={20} className="text-accent" />
+                        <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 backdrop-blur-md">
+                            <div className="flex items-center gap-4">
+                                <div className="p-2.5 bg-primary/10 rounded-xl">
+                                    <Bot size={22} className="text-primary" />
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-white text-sm">MarketMind AI</h3>
+                                    <h3 className="font-bold text-secondary text-base">MarketMind AI</h3>
                                     <div className="flex items-center gap-1.5">
                                         <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                                        <span className="text-xs text-green-400">Online</span>
+                                        <span className="text-xs text-secondary/60 font-medium">Online Assistant</span>
                                     </div>
                                 </div>
                             </div>
                             <button
                                 onClick={() => setIsOpen(false)}
-                                className="p-2 hover:bg-white/5 rounded-lg transition-colors text-gray-400 hover:text-white"
+                                className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400 hover:text-secondary"
                             >
-                                <Minimize2 size={18} />
+                                <Minimize2 size={20} />
                             </button>
                         </div>
 
                         {/* Messages */}
-                        <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+                        <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar bg-white">
                             {messages.map((msg, idx) => (
                                 <div
                                     key={idx}
-                                    className={`flex items-start gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
+                                    className={`flex items-start gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
                                 >
-                                    <div className={`p-2 rounded-full shrink-0 ${msg.role === 'user' ? 'bg-accent text-white' : 'bg-surface border border-white/10 text-accent'}`}>
-                                        {msg.role === 'user' ? <User size={14} /> : <Bot size={14} />}
+                                    <div className={`p-2.5 rounded-full shrink-0 shadow-sm ${msg.role === 'user' ? 'bg-primary text-white' : 'bg-white border border-gray-100 text-primary'}`}>
+                                        {msg.role === 'user' ? <User size={16} /> : <Bot size={16} />}
                                     </div>
                                     <div
-                                        className={`p-3 rounded-2xl text-sm max-w-[80%] ${msg.role === 'user'
-                                                ? 'bg-accent text-white rounded-tr-none'
-                                                : 'bg-white/5 border border-white/10 text-gray-200 rounded-tl-none'
+                                        className={`p-4 rounded-2xl text-sm leading-relaxed max-w-[80%] shadow-sm ${msg.role === 'user'
+                                            ? 'bg-primary text-white rounded-tr-sm'
+                                            : 'bg-gray-50 text-secondary border border-gray-100 rounded-tl-sm'
                                             }`}
                                     >
                                         {msg.content}
@@ -92,11 +92,11 @@ const Chatbot = () => {
                                 </div>
                             ))}
                             {isLoading && (
-                                <div className="flex items-start gap-3">
-                                    <div className="p-2 rounded-full bg-surface border border-white/10 text-accent shrink-0">
-                                        <Bot size={14} />
+                                <div className="flex items-start gap-4">
+                                    <div className="p-2.5 rounded-full bg-white border border-gray-100 text-primary shrink-0 shadow-sm">
+                                        <Bot size={16} />
                                     </div>
-                                    <div className="bg-white/5 border border-white/10 rounded-2xl rounded-tl-none p-4 flex gap-1">
+                                    <div className="bg-gray-50 border border-gray-100 rounded-2xl rounded-tl-sm p-4 flex gap-1.5">
                                         <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                                         <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
                                         <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
@@ -107,19 +107,19 @@ const Chatbot = () => {
                         </div>
 
                         {/* Input */}
-                        <form onSubmit={handleSend} className="p-4 border-t border-white/10 bg-surface/50">
-                            <div className="flex gap-2">
+                        <form onSubmit={handleSend} className="p-4 border-t border-gray-100 bg-white">
+                            <div className="flex gap-3">
                                 <input
                                     type="text"
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
-                                    placeholder="Ask anything..."
-                                    className="flex-1 bg-black/20 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-accent/50 placeholder:text-gray-500"
+                                    placeholder="Type your message..."
+                                    className="flex-1 bg-gray-50 border border-transparent hover:border-gray-200 focus:border-primary/30 rounded-full px-6 py-3 text-sm text-secondary focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-gray-400"
                                 />
                                 <button
                                     type="submit"
                                     disabled={!input.trim() || isLoading}
-                                    className="p-2.5 bg-accent text-white rounded-xl hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                    className="p-3 bg-primary text-white rounded-full hover:bg-[#c06d54] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-primary/20 hover:shadow-primary/30 active:scale-95"
                                 >
                                     <Send size={18} />
                                 </button>
@@ -135,9 +135,9 @@ const Chatbot = () => {
                 onClick={() => setIsOpen(!isOpen)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className={`pointer-events-auto p-4 rounded-full shadow-lg backdrop-blur-md transition-all duration-300 ${isOpen
-                        ? 'bg-red-500/20 text-red-500 border border-red-500/50'
-                        : 'bg-accent text-white shadow-[0_0_20px_rgba(6,182,212,0.4)]'
+                className={`pointer-events-auto p-4 rounded-full shadow-xl transition-all duration-300 ${isOpen
+                    ? 'bg-white text-secondary hover:bg-gray-50'
+                    : 'bg-primary text-white shadow-primary/30 hover:shadow-primary/50'
                     }`}
             >
                 {isOpen ? <X size={24} /> : <MessageSquare size={24} />}

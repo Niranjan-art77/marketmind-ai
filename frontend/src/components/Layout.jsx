@@ -1,44 +1,35 @@
 import React from 'react';
-import Sidebar from './Sidebar';
-import SystemStatus from './SystemStatus';
-import { motion } from 'framer-motion';
+import Navbar from './Navbar';
 import Chatbot from './Chatbot';
+import { motion } from 'framer-motion';
 
 const Layout = ({ children }) => {
     return (
-        <div className="flex h-screen bg-background text-white overflow-hidden font-sans relative selection:bg-accent/30 selection:text-white">
-            {/* Background Gradients */}
-            <div className="fixed inset-0 z-0 pointer-events-none">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-accent/20 blur-[120px]" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-primary/20 blur-[120px]" />
-            </div>
+        <div className="flex flex-col min-h-screen bg-background font-sans text-primary selection:bg-accent/20">
+            <Navbar />
 
-            <Sidebar />
-
-            <main className="flex-1 overflow-auto relative z-10 custom-scrollbar">
-                <div className="p-8 pb-32">
-                    <header className="max-w-7xl mx-auto mb-10 flex justify-between items-center">
-                        <div className="flex items-center gap-6">
-                            <SystemStatus />
-                        </div>
-
-                        <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-full bg-surface border border-white/10 flex items-center justify-center shadow-lg">
-                                <span className="text-sm font-bold text-accent">JD</span>
-                            </div>
-                        </div>
-                    </header>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                        className="max-w-7xl mx-auto relative z-0"
-                    >
-                        {children}
-                    </motion.div>
-                </div>
+            <main className="flex-1 w-full pt-20">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    {children}
+                </motion.div>
             </main>
+
+            <footer className="bg-surface border-t border-gray-100 py-12 mt-20">
+                <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div className="text-gray-400 text-sm">
+                        © 2024 MarketMind AI. All rights reserved.
+                    </div>
+                    <div className="flex gap-6 text-gray-500 text-sm font-medium">
+                        <a href="#" className="hover:text-black transition-colors">Privacy</a>
+                        <a href="#" className="hover:text-black transition-colors">Terms</a>
+                        <a href="#" className="hover:text-black transition-colors">Twitter</a>
+                    </div>
+                </div>
+            </footer>
 
             <Chatbot />
         </div>

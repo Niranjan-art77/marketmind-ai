@@ -7,11 +7,12 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "#0f172a",
-        surface: "#1e293b",
-        primary: "#3b82f6",
-        secondary: "#64748b",
-        accent: "#06b6d4",
+        primary: "#FFFFFF", // White text
+        secondary: "#E5E5E5", // Light Gray text
+        accent: "#E9BD43", // Accent Yellow
+        "accent-purple": "#7D3780", // Accent Purple
+        background: "#2A1B24", // Deep Dark Background
+        surface: "#4A2C40", // Primary Dark / Surface
         success: "#10b981",
         warning: "#f59e0b",
         error: "#ef4444",

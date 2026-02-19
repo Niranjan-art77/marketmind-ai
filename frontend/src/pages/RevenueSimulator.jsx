@@ -12,7 +12,7 @@ import {
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import { simulateRevenue } from '../api/client';
-import { TrendingUp, DollarSign, Users, MousePointer, Download, AlertCircle } from 'lucide-react';
+import { TrendingUp, DollarSign, Users, MousePointer, Download, AlertCircle, ArrowRight, Play, Sliders } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 ChartJS.register(
@@ -77,28 +77,27 @@ const RevenueSimulator = () => {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-            legend: {
-                position: 'top',
-                labels: { color: '#94a3b8' }
-            },
+            legend: { display: false },
             tooltip: {
-                backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                padding: 12,
-                titleColor: '#fff',
-                bodyColor: '#cbd5e1',
-                borderColor: 'rgba(255,255,255,0.1)',
-                borderWidth: 1,
+                backgroundColor: '#1A1A1A',
+                titleColor: '#FA255E',
+                bodyColor: '#fff',
+                padding: 14,
+                cornerRadius: 8,
                 displayColors: false,
-            }
+                titleFont: { size: 14, weight: 'bold' },
+                bodyFont: { size: 13 },
+            },
         },
         scales: {
             y: {
-                grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                ticks: { color: '#94a3b8', callback: (value) => '$' + value }
+                grid: { color: 'rgba(0,0,0,0.05)', borderDash: [4, 4] },
+                ticks: { color: '#666', callback: (v) => '$' + v / 1000 + 'k' },
+                border: { display: false },
             },
             x: {
                 grid: { display: false },
-                ticks: { color: '#94a3b8' }
+                ticks: { color: '#666' }
             }
         }
     };
@@ -108,124 +107,93 @@ const RevenueSimulator = () => {
         datasets: [{
             label: 'Projected Revenue ($)',
             data: simulation.graph_data.datasets[0].data,
-            borderColor: '#06b6d4',
-            backgroundColor: (context) => {
-                const ctx = context.chart.ctx;
-                const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-                gradient.addColorStop(0, 'rgba(6, 182, 212, 0.5)');
-                gradient.addColorStop(1, 'rgba(6, 182, 212, 0.0)');
-                return gradient;
-            },
+            borderColor: '#FA255E',
+            backgroundColor: 'rgba(250, 37, 94, 0.05)',
             tension: 0.4,
             fill: true,
-            pointBackgroundColor: '#0f172a',
-            pointBorderColor: '#06b6d4',
-            pointBorderWidth: 2,
+            pointBackgroundColor: '#FA255E',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 4,
             pointRadius: 6,
             pointHoverRadius: 8,
         }]
     } : null;
 
     return (
-        <div className="space-y-8 animate-fade-in max-w-7xl mx-auto pb-20">
-            <div className="flex justify-between items-center">
+        <div className="space-y-12 pb-20">
+            <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-end gap-6">
                 <div>
-                    <h2 className="text-3xl font-bold text-white">Revenue Simulator</h2>
-                    <p className="text-gray-400 mt-2">Project future growth based on key metrics with interactive modeling.</p>
+                    <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-black mb-3">Revenue Simulator</h2>
+                    <p className="text-gray-500 text-lg">Predict growth. Optimize levers. Visualize success.</p>
                 </div>
                 {simulation && (
-                    <button onClick={handleExport} className="glass px-4 py-2 rounded-lg text-sm text-gray-300 hover:text-white flex items-center gap-2 transition-colors">
-                        <Download size={16} /> Export CSV
+                    <button onClick={handleExport} className="btn-secondary flex items-center gap-2">
+                        <Download size={18} /> Export Data
                     </button>
                 )}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Controls Panel */}
                 <motion.div
                     initial={{ x: -20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
-                    className="glass-card h-fit lg:sticky lg:top-24"
+                    className="lg:col-span-4"
                 >
-                    <div className="flex items-center gap-2 mb-6 text-accent">
-                        <TrendingUp size={24} />
-                        <h3 className="text-xl font-bold">Input Metrics</h3>
-                    </div>
-
-                    <div className="space-y-5">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-1.5 flex items-center gap-2">
-                                <Users size={14} /> Monthly Visitors
-                            </label>
-                            <input
-                                type="number"
-                                name="visitors"
-                                value={inputs.visitors}
-                                onChange={handleInputChange}
-                                className="w-full bg-surface border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/50 transition-all"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-1.5 flex items-center gap-2">
-                                <MousePointer size={14} /> Conversion Rate (%)
-                            </label>
-                            <input
-                                type="number"
-                                name="conversion_rate"
-                                step="0.1"
-                                value={inputs.conversion_rate}
-                                onChange={handleInputChange}
-                                className="w-full bg-surface border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/50 transition-all"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-1.5 flex items-center gap-2">
-                                <DollarSign size={14} /> Avg. Order Value ($)
-                            </label>
-                            <input
-                                type="number"
-                                name="average_order_value"
-                                value={inputs.average_order_value}
-                                onChange={handleInputChange}
-                                className="w-full bg-surface border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/50 transition-all"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-1.5 flex items-center gap-2">
-                                <DollarSign size={14} /> Ad Spend ($)
-                            </label>
-                            <input
-                                type="number"
-                                name="ad_spend"
-                                value={inputs.ad_spend}
-                                onChange={handleInputChange}
-                                className="w-full bg-surface border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/50 transition-all"
-                            />
+                    <div className="bg-white rounded-[2rem] p-8 shadow-xl border border-gray-100 sticky top-24">
+                        <div className="flex items-center gap-3 mb-8 pb-6 border-b border-gray-100">
+                            <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center">
+                                <Sliders size={20} />
+                            </div>
+                            <h3 className="text-xl font-bold">Input Variables</h3>
                         </div>
 
-                        <button
-                            onClick={handleSimulate}
-                            disabled={loading}
-                            className="w-full neon-button mt-6 justify-center flex items-center gap-2"
-                        >
-                            {loading ? 'Calculating...' : (
-                                <>
-                                    <TrendingUp size={18} /> Run Simulation
-                                </>
-                            )}
-                        </button>
+                        <div className="space-y-6">
+                            {[
+                                { label: 'Monthly Visitors', name: 'visitors', icon: Users, step: 100 },
+                                { label: 'Conversion Rate (%)', name: 'conversion_rate', icon: MousePointer, step: 0.1 },
+                                { label: 'Avg. Order Value ($)', name: 'average_order_value', icon: DollarSign, step: 1 },
+                                { label: 'Ad Spend ($)', name: 'ad_spend', icon: DollarSign, step: 100 },
+                            ].map((field) => (
+                                <div key={field.name} className="group">
+                                    <label className="text-sm font-bold text-gray-500 mb-2 flex items-center gap-2">
+                                        <field.icon size={16} /> {field.label}
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name={field.name}
+                                        value={inputs[field.name]}
+                                        onChange={handleInputChange}
+                                        step={field.step}
+                                        className="w-full bg-gray-50 border-none rounded-xl px-4 py-4 text-black font-bold focus:ring-2 focus:ring-black/5 transition-all group-hover:bg-gray-100"
+                                    />
+                                </div>
+                            ))}
+
+                            <button
+                                onClick={handleSimulate}
+                                disabled={loading}
+                                className="w-full btn-primary mt-8 flex justify-center items-center gap-2 text-lg"
+                            >
+                                {loading ? 'Calculating...' : (
+                                    <>
+                                        Run Simulation <Play size={18} fill="currentColor" />
+                                    </>
+                                )}
+                            </button>
+                        </div>
                     </div>
                 </motion.div>
 
                 {/* Results Panel */}
-                <div className="lg:col-span-2 space-y-6">
+                <div className="lg:col-span-8 space-y-6">
                     <AnimatePresence>
                         {error && (
                             <motion.div
                                 initial={{ opacity: 0, height: 0 }}
                                 animate={{ opacity: 1, height: 'auto' }}
                                 exit={{ opacity: 0, height: 0 }}
-                                className="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-xl flex items-center gap-3"
+                                className="bg-red-50 text-red-600 p-4 rounded-xl flex items-center gap-3 border border-red-100"
                             >
                                 <AlertCircle size={20} />
                                 {error}
@@ -240,63 +208,41 @@ const RevenueSimulator = () => {
                             className="space-y-6"
                         >
                             {/* Key Metrics Cards */}
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div className="glass-card p-5 text-center bg-gradient-to-br from-surface to-blue-900/10">
-                                    <p className="text-gray-400 text-sm uppercase tracking-wider mb-2">Est. Leads</p>
-                                    <p className="text-3xl font-bold text-white">{simulation.current_performance.leads.toLocaleString()}</p>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-gray-100">
+                                    <p className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-1">Est. Leads</p>
+                                    <p className="text-4xl font-bold text-black">{simulation.current_performance.leads.toLocaleString()}</p>
                                 </div>
-                                <div className="glass-card p-5 text-center bg-gradient-to-br from-surface to-green-900/10 border-b-4 border-b-green-500/50">
-                                    <p className="text-gray-400 text-sm uppercase tracking-wider mb-2">Est. Revenue</p>
-                                    <p className="text-3xl font-bold text-green-400">${simulation.current_performance.revenue.toLocaleString()}</p>
+                                <div className="bg-black text-white rounded-[2rem] p-6 shadow-xl">
+                                    <p className="text-accent text-xs font-bold uppercase tracking-widest mb-1">Est. Revenue</p>
+                                    <p className="text-4xl font-bold">${simulation.current_performance.revenue.toLocaleString()}</p>
                                 </div>
-                                <div className="glass-card p-5 text-center bg-gradient-to-br from-surface to-purple-900/10">
-                                    <p className="text-gray-400 text-sm uppercase tracking-wider mb-2">ROAS</p>
-                                    <p className="text-3xl font-bold text-purple-400">{simulation.current_performance.roas}x</p>
+                                <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-gray-100">
+                                    <p className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-1">ROAS</p>
+                                    <p className="text-4xl font-bold text-black">{simulation.current_performance.roas}x</p>
                                 </div>
                             </div>
 
                             {/* Chart */}
-                            <div className="glass-card p-6 min-h-[400px]">
-                                <h3 className="text-lg font-bold text-white mb-6">3-Month Revenue Projection</h3>
-                                <div className="h-[300px] w-full">
+                            <div className="bg-white rounded-[2rem] p-8 shadow-lg border border-gray-100">
+                                <h3 className="text-xl font-bold mb-6">Revenue Trajectory</h3>
+                                <div className="h-[400px] w-full">
                                     <Line options={chartOptions} data={chartData} />
                                 </div>
-                            </div>
-
-                            {/* Growth Table */}
-                            <div className="glass-card overflow-hidden p-0">
-                                <table className="w-full text-left">
-                                    <thead className="bg-white/5 border-b border-white/5">
-                                        <tr>
-                                            <th className="p-4 text-gray-400 font-medium">Month</th>
-                                            <th className="p-4 text-gray-400 font-medium">Proj. Revenue</th>
-                                            <th className="p-4 text-gray-400 font-medium text-right">Growth</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-white/5">
-                                        {simulation.projections.map((proj, idx) => (
-                                            <tr key={idx} className="hover:bg-white/5 transition-colors group">
-                                                <td className="p-4 text-white font-medium">{proj.month}</td>
-                                                <td className="p-4 text-gray-300 group-hover:text-white transition-colors">${proj.revenue.toLocaleString()}</td>
-                                                <td className="p-4 text-success text-right">{proj.growth}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
                             </div>
                         </motion.div>
                     ) : (
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            className="glass-card h-full min-h-[400px] flex flex-col items-center justify-center border-dashed border-2 border-white/10 text-center p-12"
+                            className="bg-white rounded-[2rem] h-[600px] flex flex-col items-center justify-center border-dashed border-2 border-gray-200 text-center p-12"
                         >
-                            <div className="w-20 h-20 bg-surface rounded-full flex items-center justify-center mb-6 animate-pulse">
-                                <TrendingUp size={40} className="text-accent" />
+                            <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-6">
+                                <TrendingUp size={40} className="text-gray-300" />
                             </div>
-                            <h3 className="text-xl font-medium text-white">Visual Projection Engine</h3>
-                            <p className="text-gray-400 mt-2 max-w-sm">
-                                Adjust the parameters on the left and click "Run Simulation" to visualize future revenue scenarios.
+                            <h3 className="text-2xl font-bold text-black">Ready to Simulate</h3>
+                            <p className="text-gray-400 mt-2 max-w-sm text-lg">
+                                Configure your growth engine on the left to visualize future performance.
                             </p>
                         </motion.div>
                     )}

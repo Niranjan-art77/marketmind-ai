@@ -85,3 +85,29 @@ async def send_chat(request: ChatRequest):
          # Log the error but return a friendly message if possible, or raise HTTP exception
          raise HTTPException(status_code=500, detail=result["error"])
     return result
+
+# --- Auth Endpoint ---
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+class RegisterRequest(BaseModel):
+    username: str
+    password: str
+    name: str
+
+from services.auth_service import auth_service
+
+@app.post("/api/login")
+async def login(request: LoginRequest):
+    result = auth_service.login(request.username, request.password)
+    if "error" in result:
+        raise HTTPException(status_code=401, detail=result["error"])
+    return result
+
+@app.post("/api/register")
+async def register(request: RegisterRequest):
+    result = auth_service.register(request.username, request.password, request.name)
+    if "error" in result:
+        raise HTTPException(status_code=400, detail=result["error"])
+    return result
